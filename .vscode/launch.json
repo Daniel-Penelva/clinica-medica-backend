@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "ClinicaApplication",
+      "request": "launch",
+      "mainClass": "br.com.clinica.ClinicaApplication",
+      "projectName": "clinica-medica-backend",
+      "envFile": "${workspaceFolder}/.env"
+    }
+  ]
+}
