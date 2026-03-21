@@ -36,3 +36,7 @@ server:
   error:
     include-message: always
     include-binding-errors: always
+
+app:
+  cors:
+    allowedOrigins: ${CORS_ORIGINS:http://localhost:4200}
