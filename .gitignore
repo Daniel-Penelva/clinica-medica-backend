@@ -49,3 +49,6 @@ target/
 # Sistema operacional
 .DS_Store
 Thumbs.db
+
+# Notas locais de desenvolvimento
+NOTES.md
