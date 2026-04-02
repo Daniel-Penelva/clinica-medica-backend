@@ -29,7 +29,7 @@ public record PacienteRequest(
 
         // @Past garante que a data de nascimento seja no passado
         @Past(message = "Data de nascimento deve ser uma data passada") 
-        LocalDate dataNascimenDate,
+        LocalDate dataNascimento,
 
         Sexo sexo,
 
