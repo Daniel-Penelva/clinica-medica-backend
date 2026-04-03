@@ -61,8 +61,8 @@ public class PacienteMapper {
 
 
     /**
-     * Converte Paciente (entidade) -> PacienteResponse (DTO de saída) para atualizar os dados de um paciente existente.
-     * Usado no método de atualização (PUT) para refletir as mudanças feitas no paciente.
+     * Atualiza os campos de um Paciente existente a partir do Request.
+     * Usado no método de atualização (PUT) para refletir as mudanças feitas no paciente - nao cria objeto novo, atualiza o existente.
      * Usado em todos os métodos que retornam dados ao frontend, para garantir que as informações estejam sempre atualizadas.
      * 
      * Retorna um void porque a atualização é feita diretamente na entidade do paciente passada como parâmetro,
