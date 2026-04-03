@@ -23,9 +23,23 @@ public interface MedicoRepository extends JpaRepository<Medico, Long> {
     // Spring gera SELECT * FROM medicos WHERE crm = ?1
     Optional<Medico> findByCrm(String crm);
 
-    // Método para verificar se um médico com determinado CRM já existe - Query
-    // derivada: Spring gera SELECT COUNT(*) > 0 WHERE crm = ?1 (valida duplicada no cadastro)
+    // Método para verificar se um médico com determinado CRM já existe - Query derivada:
+    // Spring gera SELECT COUNT(*) > 0 WHERE crm = ?1 (valida duplicada no cadastro)
     boolean existsByCrm(String crm);
+
+    // Validacao de email duplicado no cadastro
+    // Método para verificar se um médico com determinado email já existe - Query derivada:
+    // Spring gera SELECT COUNT(*) > 0 WHERE email = ?1 (valida duplicada no cadastro) 
+    boolean existsByEmail(String email);
+
+    // Validacao de email duplicado na atualizacao (ignora o proprio registro)
+    boolean existsByEmailAndIdNot(String email, Long id);
+
+    // Método busca por nome parcial, case-insensitive, apenas ativos
+    @Query("SELECT m FROM Medico m " +
+            "WHERE LOWER(m.nome) LIKE LOWER(CONCAT('%', :nome, '%')) " +
+            "AND m.ativo = true")
+    Page<Medico> buscarPorNome(@Param("nome") String nome, Pageable pageable);
 
     // Método para buscar medicos ativos por especialidade
     @Query("SELECT m FROM Medico m JOIN m.especialidades e " +
