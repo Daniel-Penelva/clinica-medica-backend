@@ -26,6 +26,10 @@ public interface PacienteRepository extends JpaRepository<Paciente, Long> {
     // Spring gera SELECT COUNT(*) > 0 WHERE cpf = ?1 (valida duplicada no cadastro)
     boolean existsByCpf(String cpf);
 
+    // Método para verificar se um paciente com determinado email já existe - Query derivada:
+    // Spring gera SELECT COUNT(*) > 0 WHERE email =?1 (valida duplicada no cadastro)
+    boolean existsByEmail(String email);
+
     // Método para verificar se um paciente com determinado email já existe,
     // excluindo o paciente atual (útil para validação de email único no cadastro e atualização)
     // Usado na atualização para não conflitar com o próprio registro.
