@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
@@ -56,6 +57,16 @@ public class GlobalExceptionHandler {
         );
         return ResponseEntity.badRequest().body(erros);
     }
+
+    /**
+     * 400 - tratamento para JSON
+     * @param ex a exceção ocorre para JSON invalido ou malformado (aspas faltando, formato errado etc.)
+     * @return uma resposta HTTP com status 400 e uma mensagem de erro personalizada indicando que o erro está no JSON
+     */
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponse> handleMessageNotReadable(HttpMessageNotReadableException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(400, "JSON invalido ou malformado. Verifique o corpo da requisicao"));
+}
 
     /**
      * 401 - credenciais invalidas no login

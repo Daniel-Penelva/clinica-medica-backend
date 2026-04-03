@@ -72,7 +72,7 @@ public class PacienteService {
      * @param pageable paginação e ordenação
      * @return página de pacientes ativos filtrados
      */
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true)  // readOnly = true é para o Spring e o banco saber que não ha escrita
     public Page<PacienteResponse> listarAtivos(Pageable pageable) {
         return pacienteRepository.findByAtivoTrue(pageable).map(pacienteMapper::toResponse);
     }
