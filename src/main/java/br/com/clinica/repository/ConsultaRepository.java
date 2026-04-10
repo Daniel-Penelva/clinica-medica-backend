@@ -16,24 +16,53 @@ import br.com.clinica.domain.model.Consulta;
 @Repository
 public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 
-    // Método para buscar consultas por paciente com paginação - Query derivada:
-    // Spring gera SELECT * FROM consultas WHERE paciente_id = ?1
+    /**
+     * Busca consultas paginadas de um paciente específico.
+     * 
+     * <p>Query derivada gerada pelo Spring Data JPA:
+     * <code>SELECT * FROM consultas WHERE paciente_id = ?1</code></p>
+     * 
+     * @param pacienteId ID do paciente
+     * @param pageable   Configurações de paginação
+     * @return           Página de consultas do paciente
+     */
     Page<Consulta> findByPacienteId(Long pacienteId, Pageable pageable);
 
-    // Método para buscar consultas por médico com paginação - Query derivada:
-    // Spring gera SELECT * FROM consultas WHERE medico_id = ?1
+
+    /**
+     * Busca consultas paginadas de um médico específico.
+     * 
+     * <p>Query derivada gerada pelo Spring Data JPA:
+     * <code>SELECT * FROM consultas WHERE medico_id = ?1</code></p>
+     * 
+     * @param medicoId ID do médico
+     * @param pageable Configurações de paginação
+     * @return         Página de consultas do médico
+     */
     Page<Consulta> findByMedicoId(Long medicoId, Pageable pageable);
 
-    // Método para buscar consultas por status com paginação - Query derivada:
-    // Spring gera SELECT * FROM consultas WHERE status = ?1
+    /**
+     * Busca consultas paginadas por status específico.
+     * 
+     * <p>Query derivada gerada pelo Spring Data JPA:
+     * <code>SELECT * FROM consultas WHERE status = ?1</code></p>
+     * 
+     * @param status   Status da consulta
+     * @param pageable Configurações de paginação
+     * @return         Página de consultas com o status informado
+     */
     Page<Consulta> findByStatus(StatusConsulta status, Pageable pageable);
 
-    /*
-     * Método que verifica conflito de horário para evitar agendamento duplo do
-     * mesmo médico
-     * Query personalizada:
-     * Verifica se existe alguma consulta para o mesmo médico no mesmo horário que
-     * não esteja cancelada ou marcada como não compareceu, indicando um conflito de agendamento.
+
+    /**
+     * Verifica se existe conflito de horário para agendamento.
+     * 
+     * <p>Query personalizada que verifica se já existe consulta para o mesmo
+     * médico no mesmo horário, excluindo consultas canceladas ou com não comparecimento.</p>
+     * 
+     * @param medicoId ID do médico
+     * @param dataHora Data e hora proposta para o agendamento
+     * @return         <code>true</code> se existe conflito, <code>false</code> caso contrário
      */
     @Query("SELECT COUNT(c) > 0 FROM Consulta c " +
             "WHERE c.medico.id = :medicoId " +
@@ -41,11 +70,15 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
             "AND c.status NOT IN ('CANCELADA', 'NAO_COMPARECEU')")
     boolean existeConflito(@Param("medicoId") Long medicoId, @Param("dataHora") LocalDateTime dataHora);
 
-    /*
-     * Método que lista consultas de um dia especifico para o dashboard do médico
-     * Query personalizada: Busca todas as consultas agendadas para um intervalo de
-     * tempo específico e ordena por data e hora, permitindo que o médico visualize
-     * suas consultas do dia de forma organizada no dashboard.
+    /**
+     * Lista consultas agendadas de um médico para um dia específico no dashboard.
+     * 
+     * <p>Query personalizada que busca consultas no intervalo de tempo informado,
+     * filtrando apenas status AGENDADA e ordenando por data/hora ascendente.</p>
+     * 
+     * @param inicio Início do intervalo de tempo (geralmente 00:00 do dia)
+     * @param fim    Fim do intervalo de tempo (geralmente 23:59 do dia)
+     * @return       Lista ordenada de consultas do período
      */
     @Query("SELECT c FROM Consulta c " +
             "WHERE c.dataHora BETWEEN :inicio AND :fim " +

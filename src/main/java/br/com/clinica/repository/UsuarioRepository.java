@@ -10,13 +10,29 @@ import br.com.clinica.domain.model.Usuario;
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
-    // Método para buscar usuário por email - Query derivada: 
-    // Spring gera SELECT * FROM usuarios WHERE email = ?1
-    // Usado pelo UserDetailsServiceImpl para autenticação e para vincular o usuário ao médico correspondente.
+    /**
+     * Busca usuário pelo email único.
+     * 
+     * <p>Query derivada gerada pelo Spring Data JPA:
+     * <code>SELECT * FROM usuarios WHERE email = ?1</code></p>
+     * 
+     * <p>Utilizado principalmente pelo UserDetailsServiceImpl para autenticação
+     * e para vincular o usuário ao médico correspondente.</p>
+     * 
+     * @param email Email do usuário
+     * @return      Usuário encontrado ou Optional vazio
+     */
     Optional<Usuario> findByEmail(String email);
 
-    // Método para verificar se um usuário com determinado email já existe - Query derivada: 
-    // Spring gera SELECT COUNT(*) > 0 WHERE email = ?1 (valida duplicada no cadastro)
+    /**
+     * Verifica se já existe usuário com o email informado.
+     * 
+     * <p>Query derivada para validação de unicidade no cadastro:
+     * <code>SELECT COUNT(*) > 0 FROM usuarios WHERE email = ?1</code></p>
+     * 
+     * @param email Email a ser validado
+     * @return      <code>true</code> se email já existe, <code>false</code> caso contrário
+     */
     boolean existsByEmail(String email);
     
 }

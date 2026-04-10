@@ -14,29 +14,75 @@ import br.com.clinica.domain.model.Paciente;
 @Repository
 public interface PacienteRepository extends JpaRepository<Paciente, Long> {
 
-    // Métodos para buscar pacientes ativos - Query derivada: 
-    // Spring gera SELECT * FROM pacientes WHERE ativo = true
+
+    /**
+     * Busca pacientes ativos com paginação.
+     * 
+     * <p>Query derivada gerada pelo Spring Data JPA:
+     * <code>SELECT * FROM pacientes WHERE ativo = true</code></p>
+     * 
+     * @param pageable Configurações de paginação
+     * @return         Página de pacientes ativos
+     */
     Page<Paciente> findByAtivoTrue(Pageable pageable);
 
-    // Método para buscar paciente por CPF - Query derivada: 
-    // Spring gera SELECT * FROM pacientes WHERE cpf = ?1
+    /**
+     * Busca paciente pelo CPF único.
+     * 
+     * <p>Query derivada gerada pelo Spring Data JPA:
+     * <code>SELECT * FROM pacientes WHERE cpf = ?1</code></p>
+     * 
+     * @param cpf CPF do paciente
+     * @return    Paciente encontrado ou Optional vazio
+     */
     Optional<Paciente> findByCpf(String cpf);
 
-    // Método para verificar se um paciente com determinado CPF já existe - Query derivada: 
-    // Spring gera SELECT COUNT(*) > 0 WHERE cpf = ?1 (valida duplicada no cadastro)
+    /**
+     * Verifica se já existe paciente com o CPF informado.
+     * 
+     * <p>Query derivada para validação de unicidade no cadastro:
+     * <code>SELECT COUNT(*) > 0 FROM pacientes WHERE cpf = ?1</code></p>
+     * 
+     * @param cpf CPF a ser validado
+     * @return    <code>true</code> se CPF já existe, <code>false</code> caso contrário
+     */
     boolean existsByCpf(String cpf);
 
-    // Método para verificar se um paciente com determinado email já existe - Query derivada:
-    // Spring gera SELECT COUNT(*) > 0 WHERE email =?1 (valida duplicada no cadastro)
+    /**
+     * Verifica se já existe paciente com o email informado.
+     * 
+     * <p>Query derivada para validação de unicidade no cadastro:
+     * <code>SELECT COUNT(*) > 0 FROM pacientes WHERE email = ?1</code></p>
+     * 
+     * @param email Email a ser validado
+     * @return      <code>true</code> se email já existe, <code>false</code> caso contrário
+     */
     boolean existsByEmail(String email);
 
-    // Método para verificar se um paciente com determinado email já existe,
-    // excluindo o paciente atual (útil para validação de email único no cadastro e atualização)
-    // Usado na atualização para não conflitar com o próprio registro.
-    // Query derivada: Spring gera SELECT COUNT(*) > 0 WHERE email = ?1 AND id != ?2
+    /**
+     * Verifica email duplicado na atualização (ignora o próprio registro).
+     * 
+     * <p>Query derivada para validação de atualização:
+     * <code>SELECT COUNT(*) > 0 FROM pacientes WHERE email = ?1 AND id != ?2</code></p>
+     * 
+     * <p>Garante que o email seja único entre outros pacientes, excluindo o paciente 
+     * sendo atualizado identificado pelo ID.</p>
+     * 
+     * @param email Email a ser validado
+     * @param id    ID do paciente atual (a ser ignorado)
+     * @return      <code>true</code> se existe duplicata, <code>false</code> caso contrário
+     */
     boolean existsByEmailAndIdNot(String email, long id);
 
-    // Método para buscar pacientes por nome (com paginação)
+    /**
+     * Busca pacientes ativos por nome parcial (case-insensitive) com paginação.
+     * 
+     * <p>Query personalizada com LIKE para pesquisa fuzzy no nome completo.</p>
+     * 
+     * @param nome    Termo de busca no nome
+     * @param pageable Configurações de paginação
+     * @return        Página de pacientes ativos que contenham o termo no nome
+     */
     @Query("SELECT p FROM Paciente p " +
             "WHERE LOWER(p.nome) LIKE LOWER(CONCAT('%', :nome, '%')) " +
             "AND p.ativo = true")
