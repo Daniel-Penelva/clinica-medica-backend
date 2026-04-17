@@ -88,4 +88,10 @@ public interface PacienteRepository extends JpaRepository<Paciente, Long> {
             "AND p.ativo = true")
     Page<Paciente> buscarPorNome(@Param("nome") String nome, Pageable pageable);
 
+    /**
+     * Adiciona total de pacientes ativos
+     * @return total pacientes ativos encontrados
+     */
+    long countByAtivoTrue();
+
 }

@@ -108,4 +108,10 @@ public interface MedicoRepository extends JpaRepository<Medico, Long> {
                         "WHERE u.email = :email")
         Optional<Medico> findByUsuarioEmail(@Param("email") String email);
 
+        /**
+         * Adiciona o total de medicos ativos
+         * @return total medicos ativos encontrados
+         */
+        long countByAtivoTrue();
+
 }
